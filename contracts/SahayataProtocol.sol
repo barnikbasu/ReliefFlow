@@ -2,7 +2,6 @@
 pragma solidity ^0.8.18;
 
 /// @title Sahayata Protocol — simple donation/aid request contract
-/// @author
 /// @notice Allows users to create aid requests, accept ETH donations, withdraw if goal met, and refunds if goal not met.
 contract SahayataProtocol {
     uint256 public requestCount;
