@@ -1,48 +1,48 @@
-# Sahayata Protocol
+# 🛡️ Sahayata Protocol: Programmable Disaster Relief
 
-Sahayata is a simple on-chain aid/donation protocol allowing users to create aid requests, accept ETH donations, withdraw funds if the goal is met, and allow donors to claim refunds if the goal is not met.
+**Track:** Social Impact / DeFi & RWA  
+**Project Status:** Functional Prototype (Polygon Amoy Testnet)
 
-## Quickstart (local)
+## 📌 Description: The Sahayata Protocol
+Sahayata is a decentralized, programmable stablecoin system designed to eliminate "Last Mile" leakage in disaster relief. Unlike traditional cash transfers that are slow and opaque, Sahayata utilizes smart contract-enforced spending controls to ensure aid reaches verified beneficiaries and is spent exclusively at authorized essential-goods vendors (e.g., pharmacies and grocery stores). By programming the money itself, we move disaster relief from a "leap of faith" to a "cryptographic certainty."
 
-1. Install dependencies (root)
-   - Node >= 18 recommended
-   - cd to project root
-   - npm install
+## ⚠️ The Problem Statement
+Addressing the **EIBS Social Impact track**, Sahayata solves aid leakage and opacity. Traditional relief systems lose up to 30% of funds to administrative friction or corruption. Donors often have no way to verify if their contributions were spent on essentials. Our solution replaces cash with programmable stablecoins featuring on-chain whitelisting and category-based limits, ensuring 100% utility and providing a tamper-proof audit trail.
 
-2. Compile
-   - npm run compile
 
-3. Run local Hardhat node
-   - npm run node
 
-4. Deploy locally
-   - In a new terminal: npm run deploy:local
+## 🚀 Key Features
+* **Beneficiary Whitelisting:** Identity management via `AidTrust.sol` to ensure only verified victims receive aid.
+* **Category-Based Spending:** Smart contracts restrict transfers so that "Food Aid" cannot be diverted to non-essential items.
+* **Daily Spending Caps:** On-chain logic to prevent fund-draining and ensure sustainable liquidity during a crisis.
+* **Public Audit Trail:** A live transparency dashboard fetching on-chain metrics to show real-time impact to donors.
 
-5. Run tests
-   - npm test
+## 🛠️ Tech Stack
+- **Smart Contracts:** Solidity (OpenZeppelin Standards)
+- **Framework:** Hardhat
+- **Blockchain:** Polygon Amoy Testnet
+- **Frontend:** Next.js, Tailwind CSS, Lucide-React
+- **Web3 Library:** Ethers.js
+- **Deployment:** Vercel
 
-6. Frontend
-   - cd frontend
-   - npm install
-   - copy `.env.example` to `.env` and set `VITE_CONTRACT_ADDRESS`
-   - npm run dev
+## 🏗️ Technical Architecture
+1. **Onboarding:** NGOs verify victims and merchants on `AidTrust.sol`.
+2. **Distribution:** Stablecoins are minted to victims' wallets.
+3. **Execution:** `SahayataCoin.sol` intercepts transactions to verify the merchant category and check daily limits.
+4. **Transparency:** Frontend provides real-time data on distribution velocity and category-wise spending.
 
-## Environment variables
-Create a `.env` file in project root with:
-```
-ALCHEMY_SEPOLIA_URL="https://eth-sepolia.alchemyapi.io/v2/yourKey"
-DEPLOYER_PRIVATE_KEY="0x..."
-```
 
-In the frontend, set:
-```
-VITE_CONTRACT_ADDRESS="0x...."
-```
 
-## CI & Auto-deploy
-A GitHub Actions workflow will run tests on pushes and can deploy to Sepolia using the `ALCHEMY_SEPOLIA_URL` and `DEPLOYER_PRIVATE_KEY` repository secrets.
+## 👥 Team Sahayata
+* **Barnik Basu (Team Leader):** Lead Smart Contract Architect – Built `SahayataCoin.sol` & `AidTrust.sol`.
+* **Soumyajoy Chakraborty:** Web3 Frontend Engineer – Developed the Next.js Dashboard & Ethers.js integration.
+* **Anubhav Dey:** Research & Tokenomics Lead – Problem analysis, system design, and documentation.
+* **Sayan Das:** DevOps & Infrastructure – Polygon Amoy deployment, seeding test data, and Vercel hosting.
 
-## Next steps
-- Add ReentrancyGuard and OpenZeppelin patterns before mainnet.
-- Support ERC-20 donations.
-- External audit before mainnet.
+## 🔗 Project Links
+- **Live Demo:** [Insert your Vercel Link here]
+- **Video Pitch:** [Insert your YouTube/Drive Link here]
+- **Smart Contract (Amoy):** [Insert SahayataCoin Address]
+
+---
+*Developed for EIBS 2.0 Hackathon - IIT Kharagpur.*
