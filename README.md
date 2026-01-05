@@ -2,7 +2,7 @@
 
 Sahayata is a simple on-chain aid/donation protocol allowing users to create aid requests, accept ETH donations, withdraw funds if the goal is met, and allow donors to claim refunds if the goal is not met.
 
-## Quickstart
+## Quickstart (local)
 
 1. Install dependencies (root)
    - Node >= 18 recommended
@@ -24,7 +24,7 @@ Sahayata is a simple on-chain aid/donation protocol allowing users to create aid
 6. Frontend
    - cd frontend
    - npm install
-   - set REACT_APP_CONTRACT_ADDRESS to deployed contract address
+   - copy `.env.example` to `.env` and set `VITE_CONTRACT_ADDRESS`
    - npm run dev
 
 ## Environment variables
@@ -34,13 +34,15 @@ ALCHEMY_SEPOLIA_URL="https://eth-sepolia.alchemyapi.io/v2/yourKey"
 DEPLOYER_PRIVATE_KEY="0x..."
 ```
 
-## Next steps / Recommended improvements
-- Add reentrancy protection (OpenZeppelin ReentrancyGuard).
-- Support ERC-20 donations via SafeERC20.
-- Add better UI for creating requests and listing them with filters.
-- Add a multisig-controlled treasury for mainnet.
-- Add analytics and event indexing (TheGraph) for richer UX.
+In the frontend, set:
+```
+VITE_CONTRACT_ADDRESS="0x...."
+```
 
-## Security & Auditing
-- Run Slither and MythX, and obtain an external audit before mainnet.
-- Avoid privileged single-signature keys for important operations.
+## CI & Auto-deploy
+A GitHub Actions workflow will run tests on pushes and can deploy to Sepolia using the `ALCHEMY_SEPOLIA_URL` and `DEPLOYER_PRIVATE_KEY` repository secrets.
+
+## Next steps
+- Add ReentrancyGuard and OpenZeppelin patterns before mainnet.
+- Support ERC-20 donations.
+- External audit before mainnet.
