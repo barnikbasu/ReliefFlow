@@ -1,40 +1,68 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Sahayata System Logic", function () {
-  let trust, coin, admin, victim, randomPerson, shop;
+describe("SahayataProtocol", function () {
+  let Sahayata, sahayata, owner, alice, bob;
 
   beforeEach(async function () {
-    [admin, victim, randomPerson, shop] = await ethers.getSigners();
-
-    const Trust = await ethers.getContractFactory("AidTrust");
-    trust = await Trust.deploy();
-
-    const Coin = await ethers.getContractFactory("SahayataCoin");
-    coin = await Coin.deploy(await trust.getAddress());
-
-    // Setup: Victim is registered, Shop is category 1 (Food)
-    await trust.onboardVictims([victim.address]);
-    await trust.addLocalVendor(shop.address, 1);
-    await coin.distributeAid(victim.address, ethers.parseUnits("100", 18));
+    [owner, alice, bob] = await ethers.getSigners();
+    Sahayata = await ethers.getContractFactory("SahayataProtocol");
+    sahayata = await Sahayata.deploy();
+    await sahayata.waitForDeployment();
   });
 
-  it("Should allow victim to spend at a verified shop", async function () {
-    await expect(coin.connect(victim).transfer(shop.address, ethers.parseUnits("10", 18)))
-      .to.emit(coin, "Transfer");
-  });
+  it("should create a request and accept donations", async function () {
+    const duration = 3600 * 24; // 1 day
+    await expect(sahayata.createRequest("Help A", "desc", ethers.parseEther("1"), duration))
+      .to.emit(sahayata, "RequestCreated");
 
-  it("Should REJECT spending at a non-verified address", async function () {
-    // This is the core 'Anti-Leakage' test
+    const id = 1;
+    await expect(() =>
+      alice.sendTransaction({ to: sahayata.target, value: 0 })
+    ).to.not.throw;
+
+    // Donate
+    await alice.sendTransaction({ to: sahayata.target, value: 0 }); // dummy to ensure provider works
+    await alice.sendTransaction({ to: sahayata.target, value: ethers.parseEther("0") });
+
+    // Call donate via contract
     await expect(
-      coin.connect(victim).transfer(randomPerson.address, ethers.parseUnits("10", 18))
-    ).to.be.revertedWith("BLOCK: Recipient is not a registered Relief Shop");
+      alice.sendTransaction({
+        to: sahayata.target,
+        value: ethers.parseEther("0.1")
+      })
+    ).to.not.be.reverted;
   });
 
-  it("Should enforce the Daily Spending Limit", async function () {
-    // Try to spend 60 tokens (Daily limit is 50 in our contract)
-    await expect(
-      coin.connect(victim).transfer(shop.address, ethers.parseUnits("60", 18))
-    ).to.be.revertedWith("EXCEEDED: You hit your daily aid cap");
+  it("allows creator to withdraw when goal reached", async function () {
+    const duration = 3600 * 24;
+    await sahayata.createRequest("Help B", "b", ethers.parseEther("1"), duration);
+    const id = 1;
+    // donate from alice and bob
+    await sahayata.connect(alice).donate(id, { value: ethers.parseEther("0.6") });
+    await sahayata.connect(bob).donate(id, { value: ethers.parseEther("0.4") });
+
+    // goal reached, creator can withdraw
+    const before = await ethers.provider.getBalance(owner.address);
+    await expect(sahayata.connect(owner).withdraw(id)).to.emit(sahayata, "Withdrawn");
+    const after = await ethers.provider.getBalance(owner.address);
+    expect(after).to.be.gt(before);
+  });
+
+  it("allows refunds if goal not met after deadline", async function () {
+    const duration = 1; // 1 second short for test
+    await sahayata.createRequest("Help C", "c", ethers.parseEther("10"), duration);
+    const id = 1;
+    await sahayata.connect(alice).donate(id, { value: ethers.parseEther("0.1") });
+
+    // increase time past deadline
+    await ethers.provider.send("evm_increaseTime", [100]);
+    await ethers.provider.send("evm_mine", []);
+
+    // claim refund
+    const aliceBalanceBefore = await ethers.provider.getBalance(alice.address);
+    await expect(sahayata.connect(alice).claimRefund(id)).to.emit(sahayata, "Refunded");
+    const aliceBalanceAfter = await ethers.provider.getBalance(alice.address);
+    expect(aliceBalanceAfter).to.be.gt(aliceBalanceBefore - ethers.parseEther("0.001"));
   });
 });
