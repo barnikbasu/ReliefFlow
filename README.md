@@ -1,46 +1,49 @@
-# Sahayata Protocol
+# 🛡️ Sahayata Protocol: Programmable Disaster Relief
 
-Sahayata is a simple on-chain aid/donation protocol allowing users to create aid requests, accept ETH donations, withdraw funds if the goal is met, and allow donors to claim refunds if the goal is not met.
+**Track:** Social Impact / DeFi & RWA  
+**Project Status:** High-Fidelity Local Prototype (Polygon Amoy Integration)
 
-## Quickstart
+## 📌 Overview
+Sahayata (meaning "Help") is a decentralized, programmable stablecoin protocol designed to eliminate the "Last Mile" leakage in humanitarian aid. By utilizing smart contract-enforced spending controls, the protocol ensures that aid reaches verified beneficiaries and is spent **exclusively** at authorized essential-goods vendors.
 
-1. Install dependencies (root)
-   - Node >= 18 recommended
-   - cd to project root
-   - npm install
 
-2. Compile
-   - npm run compile
 
-3. Run local Hardhat node
-   - npm run node
+## ⚠️ The Problem
+Traditional disaster relief often suffers from up to 30% fund leakage due to:
+1. **Administrative Corruption:** Funds diverted before reaching victims.
+2. **Lack of Transparency:** Donors cannot track if their money bought food or non-essentials.
+3. **Identity Fraud:** Difficulty in ensuring aid reaches the right person in a chaotic environment.
 
-4. Deploy locally
-   - In a new terminal: npm run deploy:local
+## ✅ Our Solution: "Smart Aid"
+Sahayata turns stablecoins into "Purpose-Linked" assets. By intercepting the `transfer` logic on-chain, we ensure:
+* **Restricted Spending:** Tokens tagged for "Medical Aid" only unlock at whitelisted Pharmacy addresses.
+* **Daily Velocity Caps:** Limits per-day spending to prevent fund draining or theft.
+* **Immutable Audit Trail:** Real-time visibility for NGOs and donors through our Transparency Dashboard.
 
-5. Run tests
-   - npm test
+## 🛠️ Technical Stack
+* **Smart Contracts:** Solidity (OpenZeppelin ERC-20 standards)
+* **Framework:** Hardhat
+* **Blockchain:** Polygon Amoy Testnet (Local Simulation)
+* **Frontend:** Next.js 14, Tailwind CSS, Lucide Icons
+* **Web3 Integration:** Ethers.js
 
-6. Frontend
-   - cd frontend
-   - npm install
-   - set REACT_APP_CONTRACT_ADDRESS to deployed contract address
-   - npm run dev
 
-## Environment variables
-Create a `.env` file in project root with:
-```
-ALCHEMY_SEPOLIA_URL="https://eth-sepolia.alchemyapi.io/v2/yourKey"
-DEPLOYER_PRIVATE_KEY="0x..."
-```
 
-## Next steps / Recommended improvements
-- Add reentrancy protection (OpenZeppelin ReentrancyGuard).
-- Support ERC-20 donations via SafeERC20.
-- Add better UI for creating requests and listing them with filters.
-- Add a multisig-controlled treasury for mainnet.
-- Add analytics and event indexing (TheGraph) for richer UX.
+## 🏗️ Technical Architecture
+1. **AidTrust.sol:** A registry contract that manages the identities of verified NGOs, Victims, and Merchants.
+2. **SahayataCoin.sol:** The core logic. It uses a custom `_update` hook to check the recipient's category and the sender's daily balance before allowing a transaction.
+3. **Frontend Dashboard:** Fetches on-chain events to display total aid distributed and spending categories.
 
-## Security & Auditing
-- Run Slither and MythX, and obtain an external audit before mainnet.
-- Avoid privileged single-signature keys for important operations.
+## ⚙️ Local Setup & Execution
+As this is a technical prototype, follow these steps to run the environment locally:
+
+### 1. Smart Contracts
+```bash
+# Install dependencies
+npm install
+
+# Compile contracts
+npx hardhat compile
+
+# Run tests to verify spending logic
+npx hardhat test
